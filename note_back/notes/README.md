@@ -1,0 +1,2 @@
+Problem to solve:
+Crear un API graphql q permita un CRUD completo para un sistema en el q un usuario (datos básicos) escriba notas (texto, fecha de creación, fecha de modificación, cantidad de veces posteada...). La API debe permitir además el filtrado y ordenamiento. Para eso dispone de 15 días. De ser posible realicele las pruebas a la API.

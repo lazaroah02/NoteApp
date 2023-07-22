@@ -1,0 +1,7 @@
+django == 3.2.20
+django-cors-headers == 4.2.0
+graphene-django == 2.16.0
+django-graphiql == 0.4.4
+django-graphql-jwt == 0.3.0
+django-graphql-auth == 0.3.16
+django-graphene-permissions == 0.0.4
