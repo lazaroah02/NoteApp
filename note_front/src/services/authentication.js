@@ -1,14 +1,4 @@
-import { GRAPHQL_API } from "@/settings";
-
-function makeFetch(query){
-    return fetch(GRAPHQL_API, {
-      method:"POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body:JSON.stringify({query})
-    })  
-  }
+import { makeFetch } from "./base";
 
 export function login({username, password}){
     const query = `
@@ -23,7 +13,7 @@ export function login({username, password}){
             }
         }
     `
-    return makeFetch(query)
+    return makeFetch({query:query})
     .then(res => res.json())
     .then(data => {return data})
 }
@@ -38,8 +28,9 @@ export function register({username, email, password1, password2}){
         }
     }
     `
-    return makeFetch(query)
+    return makeFetch({query:query})
     .then(res => res.json())
     .then(data => {return data})
 }
+
 

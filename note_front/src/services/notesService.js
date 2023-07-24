@@ -1,26 +1,18 @@
-import axios from "axios";
-import { GRAPHQL_API } from "@/settings";
+import { makeFetch } from "./base";
 
-function makeFetch(query){
-  return fetch(GRAPHQL_API, {
-    method:"POST",
-    headers: {
-      "Authorization": "JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6Inl1bGkiLCJleHAiOjE2OTAwNTQzMTMsIm9yaWdJYXQiOjE2OTAwNTQwMTN9.PICHA7reVV9r8XBqLtuT9Xy7vsR2LPJxI4uYIucMP_I",
-      "Content-Type": "application/json",
-    },
-    body:JSON.stringify({query})
-  })  
-}
-
-export function getNotes(){
+export function getNotes({token}){
   const query = `{
     notes{
-      id
-      title
-      content
+      edges{
+        node{
+          id
+          title
+          content
+        }
+      }
     }
   }`
-  return makeFetch(query)
+  return makeFetch({query: query, token:token})
   .then(res => res.json())
   .then(data => {return data})
 }
@@ -33,7 +25,7 @@ export function getNote(noteId){
       content
     }
   }`
-  return makeFetch(query)
+  return makeFetch({query: query})
   .then(res => res.json())
   .then(data => {return data})
 }
@@ -51,7 +43,7 @@ export function createNote(data){
     }
     
     `
-  return makeFetch(query)
+  return makeFetch({query: query})
   .then(res => {
     if(res.status === 200){
       res.json()
@@ -62,12 +54,30 @@ export function createNote(data){
   .then(data => {return data})
 }
 
-export function editNote(noteId, data){
-    return axios.put(`${GRAPHQL_API}${noteId}/`, data)
-    .then(res => {return res})
+export function editNote({noteId, token, data}){
+  const query = `
+  mutation {
+    editNote(id: ${noteId}, title: "${data.title}", content: "${data.content}"){
+      success,
+      note{
+        id,
+        title,
+        content,
+      }
+    }
+  }
+`
+  return makeFetch({query: query, token:token})
+  .then(res => {
+    if(res.status === 200){
+      return "Nota Editada correctamente"
+    }else{
+      return "Error al editar la nota"
+    }
+    })
 }
 
-export function deleteNote(noteId){
+export function deleteNote({noteId, token}){
   const query = `
     mutation {
       deleteNote(id: ${noteId}){
@@ -75,7 +85,7 @@ export function deleteNote(noteId){
       }
     }
   `
-  return makeFetch(query)
+  return makeFetch({query: query, token:token})
   .then(res => {
     if(res.status === 200){
       return "Nota borrada correctamente"

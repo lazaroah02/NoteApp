@@ -20,7 +20,8 @@ export default defineComponent({
                 login({username:this.username, password: this.password})
                 .then(data => {
                     if(data.data.tokenAuth.success === true){
-                        this.router.push("/notes")
+                        localStorage.setItem("jwt", data.data.tokenAuth.token)
+                        this.router.push("/")
                     }
                     else{
                         alert("Error al iniciar sesion")

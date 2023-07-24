@@ -1,19 +1,30 @@
 <script>
-import { defineComponent, ref} from 'vue'
+import {ref} from 'vue'
 import {getNotes, deleteNote} from '../services/notesService'
 import {useRouter} from 'vue-router'
 
-export default defineComponent({
+export default {
     name:"NotesList",
     setup() {
         const notes = ref([])
         const router = useRouter()
+
         return {notes, router}
     },
-    created(){
-        getNotes()
-        .then(data => {
-            this.notes = data.data.notes})
+    computed:{
+        userToken(){
+            return this.$store.state.infoUser.token
+        }
+    },
+    watch:{
+        userToken(value){
+            if(value){
+                getNotes({token:this.$store.state.infoUser.token})
+                .then(data => {
+                    console.log(data)
+                    this.notes = data.data.notes.edges})
+            }
+        }
     },
     methods:{
         validateLength(text){
@@ -38,18 +49,18 @@ export default defineComponent({
             }
         }
     }, 
-})
+}
 </script>
 
 <template>
     <button @click="router.push(to = '/notes/add')">Create Note</button>
     <div class = "cards-container">
-        <div class = "card" v-for="note in notes" :key="note.id">
-            <h4 class = "title">{{ validateLength(note.title) }}</h4>
-            <div class = "content">{{ validateLength(note.content) }}</div>
+        <div class = "card" v-for="note in notes" :key="note.node.id">
+            <h4 class = "title">{{ validateLength(note.node.title) }}</h4>
+            <div class = "content">{{ validateLength(note.node.content) }}</div>
             <div class = "buttons-container">
-                <button class = "edit-button" @click="router.push(`note/${note.id}`)">Edit</button>
-                <button class = "delete-button" @click="handleDeleteNote(note.id)">Delete</button>
+                <button class = "edit-button" @click="router.push(`note/${note.node.id}`)">Edit</button>
+                <button class = "delete-button" @click="handleDeleteNote(note.node.id)">Delete</button>
             </div>
         </div>
     </div>
