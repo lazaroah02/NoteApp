@@ -5,13 +5,37 @@ from .models import Note
 from django_graphene_permissions import permissions_checker
 from django_graphene_permissions.permissions import IsAuthenticated
 from .exceptions import NotOwnerException
+from graphene_django.filter import DjangoFilterConnectionField
+from django_filters import FilterSet, OrderingFilter
+from .utils import convert_graphqlid_to_int
 
 User = get_user_model()
+
+class NoteFilter(FilterSet):
+    class Meta:
+        model = Note
+        fields = {
+            'title': ('exact', 'contains'),
+            'content': ('exact', 'contains'),
+        }
+    order_by = OrderingFilter(
+        fields=(
+        ('created_at', 'created_at'),
+        ),
+        field_labels={
+        'created_at': 'created_at',
+        }
+    )
 
 class NoteType(DjangoObjectType):
     class Meta:
         model = Note
-
+        interfaces = (graphene.relay.Node,)
+        
+class NoteConnections(graphene.relay.Connection):
+    class Meta:
+        node = NoteType   
+    
 class UserType(DjangoObjectType):
     class Meta:
         model = User   
@@ -38,7 +62,8 @@ class DeleteNoteMutation(graphene.Mutation):
     
     @permissions_checker([IsAuthenticated])
     def mutate(self, info, id):
-        note = Note.objects.get(id = id)
+        num_id = convert_graphqlid_to_int(id)
+        note = Note.objects.get(id = num_id)
         if note.user.id != info.context.user.id:
             raise NotOwnerException
         note.delete()      
@@ -63,7 +88,7 @@ class UpdateNoteMutation(graphene.Mutation):
         return UpdateNoteMutation(note = note)  
          
 class Query(graphene.ObjectType):
-    notes = graphene.List(NoteType)
+    notes = DjangoFilterConnectionField(NoteType, filterset_class = NoteFilter)
     note = graphene.Field(NoteType, id = graphene.ID())
     
     @permissions_checker([IsAuthenticated])
@@ -72,7 +97,8 @@ class Query(graphene.ObjectType):
     
     @permissions_checker([IsAuthenticated])
     def resolve_note(self, info, id):
-        note = Note.objects.get(id = id)
+        num_id = convert_graphqlid_to_int(id)
+        note = Note.objects.get(id = num_id)
         if note.user.id != info.context.user.id:
             raise NotOwnerException
         return note
