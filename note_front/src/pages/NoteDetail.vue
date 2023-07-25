@@ -8,40 +8,74 @@ export default defineComponent({
     setup() {
         const title = ref("")
         const content = ref("")
+        const showErrorMessage = ref(false)
         const route = useRoute()
         const router = useRouter()
         const noteId = route.params.noteId
-        return {title, content, noteId, router}
+        return {title, content, noteId, router, showErrorMessage}
     },
     methods:{
         onEditNote(e){
             e.preventDefault()
             editNote(this.noteId, {title:this.title, content: this.content})
             .then(data => {
-                if(data.status === 200){
+                if(data.errors){
+                    alert("Error al editar la nota")
+                }else{
                     alert("Nota editada correctamente!")
                 }
             })
-            .catch(() => {
-                alert("Error al editar la nota")})
         },
         onDeleteNote(){
-            deleteNote(this.noteId)
-            this.router.push("/")
+            deleteNote({noteId:this.noteId, token:this.userToken})
+            .then((data) => {
+                if(data.errors){
+                    alert("Error al eliminar la nota")
+                }else{
+                    this.router.push("/")
+                }
+            })
         }
     },
-    created(){
-        getNote(this.noteId)
-        .then(data => {
-            this.title = data.data.note.title,
-            this.content = data.data.note.content
-        })
+    //watch when user token change to fecth user notes
+    computed:{
+        userToken(){
+            return this.$store.state.infoUser.token
+        }
+    },
+    watch:{
+        userToken(token){
+            if(token){
+                getNote({noteId:this.noteId, token:this.$store.state.infoUser.token})
+                .then(data => {
+                    if(data.errors){
+                        this.showErrorMessage = true
+                    }else{
+                        this.title = data.data.note.title,
+                        this.content = data.data.note.content
+                    }
+                })
+            }
+        }
+    },
+    mounted(){
+        if(this.userToken){
+            getNote({noteId:this.noteId, token:this.$store.state.infoUser.token})
+            .then(data => {
+                if(data.errors){
+                        this.showErrorMessage = true
+                }else{
+                    this.title = data.data.note.title,
+                    this.content = data.data.note.content
+                }
+            })
+        }
     }
 })
 </script>
 
 <template>
-    <form class = "note-detail-form" @submit="editNote">
+    <form v-if="!showErrorMessage"   class = "note-detail-form" @submit="editNote">
         <label>Titulo:</label>
         <input class = "input-title" type="text" :value= "title" @change="e => title=e.target.value"/>
         <label>Content:</label>
@@ -51,6 +85,7 @@ export default defineComponent({
             <button class = "send-button" @click="onDeleteNote">Enviar</button>
         </div>
     </form>
+    <div v-else>Error al obtener la nota</div>
 </template>
 
 <style scoped>

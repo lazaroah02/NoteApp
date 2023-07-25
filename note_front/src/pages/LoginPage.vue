@@ -2,6 +2,7 @@
 import { defineComponent, ref } from 'vue'
 import {login} from '../services/authentication'
 import {useRouter} from "vue-router"
+import './commonStyles/loginRegisterStyles.css'
 
 export default defineComponent({
     setup() {
@@ -14,17 +15,18 @@ export default defineComponent({
         handleLogin(e){
             e.preventDefault();
             if(this.username === "" || this.password === ""){
-                alert("No deben haber campos vacios")
+                alert("Don't leav empty fields")
             }
             else{
                 login({username:this.username, password: this.password})
                 .then(data => {
                     if(data.data.tokenAuth.success === true){
                         localStorage.setItem("jwt", data.data.tokenAuth.token)
+                        this.$store.commit("setInfoUser", {username:this.username, token:data.data.tokenAuth.token})
                         this.router.push("/")
                     }
                     else{
-                        alert("Error al iniciar sesion")
+                        alert("Error in login")
                     }
                 })
             }
@@ -34,13 +36,24 @@ export default defineComponent({
 </script>
 
 <template>
-    <div>
-        <form @submit="e => handleLogin(e)">
-            <label>Username</label>
-            <input type="text" placeholder="Username" :value = "username" @change = "e => username = e.target.value"/>
-            <label>Password</label>
-            <input type="text" placeholder="Password" :value = "password" @change = "e => password = e.target.value"/>
-            <button>Login</button>
-        </form>
+    <div class = "page-background">
+        <div class = "panel">
+            <div class = "title-container">
+                <div class = "title">Welcome to <span> Green</span> Notes <img alt = "notes-logo" src = "../assets/logo.png"/></div>
+                <div class = "description">
+                    <span>Hello, in Green Notes you can</span>
+                    <span>save notes in a simple,</span>
+                    <span>easy and safe way</span>
+                </div>
+            </div>
+            <form @submit="e => handleLogin(e)" class = "form">
+                <label >Username</label>
+                <input type="text" :value = "username" @change = "e => username = e.target.value"/>
+                <label>Password</label>
+                <input type="text" :value = "password" @change = "e => password = e.target.value"/>
+                <div class = "register-link">If you don't have account register <a @click="router.push('/register')">here</a></div>
+                <button>Login</button>
+            </form>
+        </div>
     </div>
 </template>

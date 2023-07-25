@@ -21,7 +21,7 @@ export function login({username, password}){
 export function register({username, email, password1, password2}){
     const query = `
     mutation{
-        register(username:"${username}", email:"${email}", password1:"${password1}", password12:"${password2}"){
+        register(username:"${username}", email:"${email}", password1:"${password1}", password2:"${password2}"){
         success,
         token,
         errors,

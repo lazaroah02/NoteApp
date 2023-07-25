@@ -2,12 +2,8 @@ import {createRouter, createWebHashHistory} from 'vue-router';
 
 const routes = [
   {
-    path: '/',
-    redirect: "/notes"
-  },
-  {
     name:"NotesList",
-    path: '/notes',
+    path: '/',
     component:() => import('./pages/NotesList.vue'),
   },
   {
@@ -29,6 +25,7 @@ const routes = [
     component:() => import('./pages/LoginPage.vue'),
   },
   {
+    name:"Register",
     path:"/register",
     component:() => import('./pages/RegisterPage.vue')
   }

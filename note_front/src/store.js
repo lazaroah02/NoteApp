@@ -4,7 +4,7 @@ import {getUserProfile} from './services/userProfile'
 export const store = createStore({
   state () {
     return {
-      infoUser: {username:null, token:null}
+      infoUser: {username:null, token:null},
     }
   },
   mutations: {
@@ -18,7 +18,7 @@ export const store = createStore({
         state.infoUser.username = data.data.me.username
         state.infoUser.token = token
       })
-    }
+    },
   },
   actions: {
   

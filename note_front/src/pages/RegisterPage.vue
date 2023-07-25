@@ -2,6 +2,7 @@
 import { defineComponent, ref } from 'vue'
 import {register} from '../services/authentication'
 import {useRouter} from "vue-router"
+import './commonStyles/loginRegisterStyles.css'
 
 export default defineComponent({
     setup() {
@@ -16,19 +17,30 @@ export default defineComponent({
         handleRegister(e){
             e.preventDefault();
             if(this.username === "" || this.email === "" || this.pass1 === "" || this.pass2 === ""){
-                alert("No deben haber campos vacios")
+                alert("Don't leave empty fields")
             }
-            if(this.pass1 != this.pass2){
-                alert("Las contraseñas no son iguales")
+            else if(this.pass1 != this.pass2){
+                alert("Passwords not the same")
             }
             else{
                 register({username:this.username, email:this.email, password1: this.pass1, password2: this.pass2})
                 .then(data => {
-                    if(data.data.tokenAuth.success === true){
-                        this.router.push("/notes")
+                    console.log(data)
+                    if(data.data.register.success){
+                        localStorage.setItem("jwt", data.data.register.token)
+                        this.$store.commit("fetchInfoUser", {token:data.data.register.token})
+                        this.router.push("/")
                     }
                     else{
-                        alert("Error al iniciar sesion")
+                        if(data.data.register.errors.email){
+                            alert(data.data.register.errors.email[0].message)
+                        }
+                        else if(data.data.register.errors.password2){
+                            alert("Check the password, is too common, too short or too easy")
+                        }
+                        else{
+                            alert("Error in register")
+                        }
                     }
                 })
             }
@@ -38,17 +50,24 @@ export default defineComponent({
 </script>
 
 <template>
-    <div>
-        <form @submit="e => handleLogin(e)">
-            <label>Username</label>
-            <input type="text" placeholder="Username" :value = "username" @change = "e => username = e.target.value"/>
-            <label>Email</label>
-            <input type="text" placeholder="Email" :value = "username" @change = "e => username = e.target.value"/>
-            <label>Password1</label>
-            <input type="text" placeholder="Password" :value = "password" @change = "e => password = e.target.value"/>
-            <label>Password2</label>
-            <input type="text" placeholder="Password" :value = "password" @change = "e => password = e.target.value"/>
-            <button>Register</button>
-        </form>
+    <div class = "page-background">
+        <div class = "panel">
+            <div class = "title-container">
+                <div class = "title">Welcome to <span> Green</span> Notes <img alt = "notes-logo" src = "../assets/logo.png"/></div>
+            </div>
+            <form @submit="e => handleRegister(e)" class = "form register-form">
+                <label >Username</label>
+                <input type="text" :value = "username" @change = "e => username = e.target.value"/>
+                <label >Email</label>
+                <input type="email" :value = "email" @change = "e => email = e.target.value"/>
+                <label>Password</label>
+                <input type="text" :value = "pass1" @change = "e => pass1 = e.target.value"/>
+                <label>Repeat Password</label>
+                <input type="text" :value = "pass2" @change = "e => pass2 = e.target.value"/>
+                <div class = "register-link">If you have account login <a @click="router.push('/login')">here</a></div>
+                <button>Register</button>
+            </form>
+        </div>
     </div>
 </template>
+

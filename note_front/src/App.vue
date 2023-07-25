@@ -30,12 +30,25 @@ export default {
 </script>
 
 <style>
+@font-face {
+  font-family: "Cabin";
+  src: url('./assets/fonts/Cabin-VariableFont_wdth,wght.woff2');
+}
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+}
+body{
+  margin:0 auto;
+}
+.page-background{
+  background-image: url("./assets/background.png");
+  background-attachment: fixed;
+  background-size: cover;
+  background-repeat: no-repeat ;
+  background-color: rgb(160, 160, 160);
+  position: absolute;
+  min-width: 100vw;
+  min-height: 100vh;
 }
 </style>

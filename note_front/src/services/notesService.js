@@ -17,20 +17,20 @@ export function getNotes({token}){
   .then(data => {return data})
 }
 
-export function getNote(noteId){
+export function getNote({noteId, token}){
   const query = `{
-    note(id: ${noteId}){
+    note(id: "${noteId}"){
       id
       title
       content
     }
   }`
-  return makeFetch({query: query})
+  return makeFetch({query: query, token: token})
   .then(res => res.json())
   .then(data => {return data})
 }
 
-export function createNote(data){
+export function createNote({data, token}){
   const query = `
     mutation {
       createNote(title:"${data.title}", content:"${data.content}"){
@@ -43,14 +43,8 @@ export function createNote(data){
     }
     
     `
-  return makeFetch({query: query})
-  .then(res => {
-    if(res.status === 200){
-      res.json()
-    }else{
-      throw new Error("")
-    }
-  })
+  return makeFetch({query: query, token:token})
+  .then(res => res.json())
   .then(data => {return data})
 }
 
@@ -68,30 +62,20 @@ export function editNote({noteId, token, data}){
   }
 `
   return makeFetch({query: query, token:token})
-  .then(res => {
-    if(res.status === 200){
-      return "Nota Editada correctamente"
-    }else{
-      return "Error al editar la nota"
-    }
-    })
+  .then(res => res.json())
+  .then(data => {return data})
 }
 
 export function deleteNote({noteId, token}){
   const query = `
     mutation {
-      deleteNote(id: ${noteId}){
+      deleteNote(id: "${noteId}"){
         message
       }
     }
   `
   return makeFetch({query: query, token:token})
-  .then(res => {
-    if(res.status === 200){
-      return "Nota borrada correctamente"
-    }else{
-      return "Error al eliminar la nota"
-    }
-    })
+  .then(res => res.json())
+  .then(data => {return data})
 }
 

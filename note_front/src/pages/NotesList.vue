@@ -11,21 +11,6 @@ export default {
 
         return {notes, router}
     },
-    computed:{
-        userToken(){
-            return this.$store.state.infoUser.token
-        }
-    },
-    watch:{
-        userToken(value){
-            if(value){
-                getNotes({token:this.$store.state.infoUser.token})
-                .then(data => {
-                    console.log(data)
-                    this.notes = data.data.notes.edges})
-            }
-        }
-    },
     methods:{
         validateLength(text){
             if(text.length > 30){
@@ -34,21 +19,50 @@ export default {
             return text
         },
         handleDeleteNote(noteId){
-            deleteNote(noteId)
-            .then(message => {
-                alert(message)
-                this.removeNoteFromNoteList(noteId)
+            deleteNote({noteId:noteId, token:this.userToken})
+            .then(data => {
+                if(data.errors){
+                    alert("Error al eliminar la nota")
+                }
+                else{
+                    alert("Nota eliminada correctamente")
+                    this.removeNoteFromNoteList(noteId)
+                }
             })
-            .catch(() => alert("Error al borrar la nota"))
+            
         },
         removeNoteFromNoteList(noteId){
             for(let i = 0; i < this.notes.length; i++){
-                if(this.notes[i].id == noteId){
+                if(this.notes[i].node.id == noteId){
                     this.notes.splice(i, 1)
                 }
             }
         }
     }, 
+    //watch when user token change to fecth user notes
+    computed:{
+        userToken(){
+            return this.$store.state.infoUser.token
+        }
+    },
+    watch:{
+        userToken(token){
+            if(token){
+                getNotes({token:token})
+                .then(data => {
+                    this.notes = data.data.notes.edges
+                })
+            }
+        },
+    },
+    mounted(){
+        if(this.userToken){
+            getNotes({token:this.userToken})
+                .then(data => {
+                    this.notes = data.data.notes.edges
+                })
+        }
+    }
 }
 </script>
 

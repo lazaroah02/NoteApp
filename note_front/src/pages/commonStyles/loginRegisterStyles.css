@@ -1,0 +1,115 @@
+.panel{
+    height: 100vh;
+    width: 50%;
+    position: absolute;
+    background-color: #fff8e4f0;
+    border-top-right-radius: 250px;
+    padding-left:15px;
+    display: flex;
+    flex-direction: column;
+    font-family: "Cabin";
+}
+.title-container{
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top:5px;
+    padding-left:10px;
+    padding-bottom: 10px;
+    margin-top: 40px;
+    border-left:3px solid #707070;
+}
+.title{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    font-size: 30px;
+}
+.title span{
+    color:green;
+    margin-left: 10px;
+    margin-right: 10px;
+    font-weight: bold;
+    background-image: linear-gradient(to right, #477456, #88BE99);
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.title img{
+    width: 30px;
+}
+.description{
+    display: flex;
+    flex-direction: column;
+    margin-top:10px;
+}
+.form{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap:10px;
+    width: 90%;
+    position: relative;
+    top:30vh
+}
+.form label{
+    background-color: transparent;
+}
+.form input{
+    border:0;
+    background-color: transparent;
+    border-bottom: 1px solid #707070;
+}
+.form input:focus{
+    outline: none;
+}
+.register-link{
+    text-align: center;
+}
+.register-link a{
+    color:#537960;
+    cursor: pointer;
+}
+.form button{
+    background-color:#5CAF79;
+    color: white;
+    border:0;
+    width: 225px;
+    height: 45px;
+    border-radius: 25px;
+    font-size: 15px;
+    margin:0 auto;
+    margin-top:70px;
+    cursor: pointer;
+}
+.register-form{
+    top: 23vh !important;
+}
+
+/*Mobile*/
+@media (max-width:700px){
+    .panel{
+        width: 100%;
+    }
+    .title-container{
+        margin-top:80px;
+    }
+    .title{
+        font-size:23px;
+    }
+    .form{
+        top:20vh;
+    }
+    .register-form{
+        top: 13vh!important;
+    }
+}
+/*Tablet*/
+@media (min-width:700px) and (max-width:1000px){
+    .panel{
+        width: 70%;
+    }
+    .title-container{
+        margin-top:60px;
+    }
+}

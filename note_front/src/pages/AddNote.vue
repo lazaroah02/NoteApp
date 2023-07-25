@@ -14,9 +14,15 @@
         methods:{
             createNote(e){
                 e.preventDefault();
-                createNote({title:this.title, content:this.content})
-                .then(() => {this.router.push("/")})
-                .catch(() => alert("Error al crear la nota"))
+                createNote({data:{title:this.title, content:this.content}, token:this.$store.state.infoUser.token})
+                .then((data) => {
+                    if(data.errors){
+                        alert("Error al crear la nota")
+                    }
+                    else{
+                        this.router.push("/")
+                    }
+                })
             }
         }
     })
