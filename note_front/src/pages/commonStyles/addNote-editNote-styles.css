@@ -1,0 +1,122 @@
+.note-form{
+    width: 90%;
+    height: 100%;
+    margin-left:5px;
+    margin-top:20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap:5px;
+    background-color: white;
+    border-radius: 10px;
+}
+.go-back-button-and-input-title-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    height: 50px;
+    border-bottom: 1px solid #707070;
+    gap:10px
+}
+.go-back-button{
+    background-color: white;
+    height:100%;
+    border: 0;
+    float: left;
+    width: 50px;
+    border-top-left-radius: 10px;
+    cursor: pointer;
+    padding-top: 5px;
+}
+.input-title{
+    border-top-right-radius: 10px;
+    border: 0;
+    height: 96%;
+    width: 80%;
+}
+.input-title:focus{
+    outline:none;
+}
+.input-content{
+    width: 98%;
+    height: 85%;
+    border: 0;
+    resize: none;
+    padding:10px;
+}
+.input-content:focus{
+    outline:none;
+}
+
+.title{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    font-size: 30px;
+    margin-top:10px;
+}
+.title span{
+    color:green;
+    margin-right: 10px;
+    font-weight: bold;
+    background-image: linear-gradient(to right, #477456, #88BE99);
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.send-button{
+    position: fixed;
+    bottom: 50px;
+    right: 50px;
+    width: 45px;
+    height: 45px;
+    border-radius: 100%;
+    background-color: #5CAF79;
+    color:white;
+    border:0;
+    cursor: pointer;
+}
+.cancel-button{
+    background-color: #DC6161;
+    width: 40px;
+    height: 40px;
+    position:fixed;
+    bottom: 120px;
+    right: 53px;
+    color:white;
+    border-radius: 100%;
+    border:0;
+    cursor:pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/*Mobile*/
+@media (max-width:600px) {
+    .note-form{
+        width: 95%;
+        margin: 0 auto;
+        margin-top:20px;
+        margin-left: -5px;
+    }
+    .input-title{
+        width: 70%;
+    }
+    .input-content{
+        width: 90%;
+    }
+}
+
+/*Table*/
+@media (min-width:600px) and (max-width:1150px) {
+    .note-form{
+        width: 85%;
+        margin: 0 auto;
+        margin-top:20px;
+        margin-left: 0;
+    }
+    .input-content{
+        width: 95%;
+    }
+}

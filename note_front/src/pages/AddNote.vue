@@ -2,6 +2,8 @@
     import { defineComponent, ref } from 'vue'
     import { createNote } from '../services/notesService';
     import {useRouter} from 'vue-router'
+    import './commonStyles/pages.css'
+    import './commonStyles/addNote-editNote-styles.css'
 
     export default defineComponent({
         name:"AddNote",
@@ -12,7 +14,7 @@
             return {title, content, router}
         },
         methods:{
-            createNote(e){
+            handleCreateNote(e){
                 e.preventDefault();
                 createNote({data:{title:this.title, content:this.content}, token:this.$store.state.infoUser.token})
                 .then((data) => {
@@ -23,42 +25,32 @@
                         this.router.push("/")
                     }
                 })
-            }
+            },
         }
     })
 </script>
 
 <template>
-    <form class = "note-detail-form" @submit="createNote">
-        <label>Titulo:</label>
-        <input class = "input-title" type="text" @change="e => title = e.target.value"/>
-        <label>Content:</label>
-        <textarea class = "input-content" @change="e => content = e.target.value"></textarea>
-        <button class = "send-button" >Enviar</button>
-    </form>
+    <main class = "page-background">
+        <div class = "panel">
+            <div class = "title"><span>Green</span> Notes</div>
+            <form class = "note-form" @submit="(e) => handleCreateNote(e)">
+                <div class = "go-back-button-and-input-title-container">
+                    <button 
+                        class = "go-back-button" 
+                        type = "button"
+                        @click="router.push('/')"
+                        ><img alt = "chevron-left" src = "../assets/chevron-left.svg"/></button>
+                    <input class = "input-title" type="text" placeholder="Title" @change="e => title = e.target.value"/>
+                </div>
+                <textarea class = "input-content" @change="e => content = e.target.value"></textarea>
+                <button @click = "router.push('/')" class = "cancel-button"><img alt = "trash" src = "../assets/trash.svg"/></button>
+                <button class = "send-button"><img alt = "check" src = "../assets/check-icon.svg"/></button>
+            </form>
+        </div>
+    </main>
 </template>
 
 <style scoped>
-.note-detail-form{
-    width: 50vw;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    gap:10px;
-}
-.note-detail-form label{
-    text-align: start;
-}
-.input-title{
-    width: 99.8%;
-}
-.input-content{
-    min-width: 100%;
-    max-width: 100%;
-    min-height: 100px;
-}
-.send-button{
-    background-color:blue;
-}
+
 </style>

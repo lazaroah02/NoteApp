@@ -2,9 +2,10 @@
 import {ref} from 'vue'
 import {getNotes, bulkDeleteNotes} from '../services/notesService'
 import {useRouter} from 'vue-router'
-import NoteComponent from '../components/NoteComponent.vue'
 import {debounce} from '../utils/debounce'
 import LoaderComponent from '../components/LoaderComponent.vue'
+import NoteComponent from "../components/NoteComponent" 
+import './commonStyles/pages.css'
 
 export default {
     name:"NotesList",
@@ -43,9 +44,7 @@ export default {
         },
         removeNotesFromNoteList(notesId){
             let notesCopy = [...this.notes]
-            this.notes = notesCopy.filter(note => {
-                notesId.indexOf(note.node.id) === -1
-            });
+            this.notes = notesCopy.filter(note => notesId.indexOf(note.node.id) === -1);
         },
         fetchNotes(token){
             if(token){
@@ -110,7 +109,7 @@ export default {
 
 <template>
     <div class = "page-background">
-        <section class = "notes-panel">
+        <section class = "panel">
             <div class = "notes-title-container">
                 <div class = "notes-title"><span>Green</span> Notes <img alt = "notes-logo" src = "../assets//logo.png"/></div>
                 <div class = "notes-welcome-message">Hi {{ $store.state.infoUser.username }}, here are your notes</div>
@@ -156,17 +155,6 @@ export default {
 </template>
 
 <style scoped>
-    .notes-panel{
-        height: 100vh;
-        width: 96%;
-        position: absolute;
-        background-color: #fff8e4f0;
-        border-top-right-radius: 250px;
-        display: flex;
-        flex-direction: column;
-        font-family: "Raleway";
-        padding-left: 20px;
-    }
     .notes-title-container{
         width: 80%;
         display: flex;
@@ -344,9 +332,6 @@ export default {
 
     /*Mobile*/
     @media (max-width:600px) {
-        .notes-panel{
-            border-top-right-radius: 0px;
-        }
         .cards-container{
             width: 90vw;
             grid-template-columns: repeat(auto-fit, minmax(200px, 95%));

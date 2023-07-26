@@ -1,0 +1,18 @@
+.panel{
+    height: 100vh;
+    width: 96%;
+    position: absolute;
+    background-color: #fff8e4f0;
+    border-top-right-radius: 250px;
+    display: flex;
+    flex-direction: column;
+    font-family: "Raleway";
+    padding-left: 20px;
+}
+
+/*Mobile*/
+@media (max-width:600px) {
+    .panel{
+        border-top-right-radius: 0px;
+    }
+}
