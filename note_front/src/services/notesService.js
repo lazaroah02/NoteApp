@@ -1,13 +1,14 @@
 import { makeFetch } from "./base";
 
-export function getNotes({token}){
+export function getNotes({token, orderBy = "-created_at", contains = ""}){
   const query = `{
-    notes{
+    notes(orderBy: "${orderBy}", title_Contains:"${contains}", content_Contains:"${contains}"){
       edges{
         node{
           id
           title
           content
+          createdAt
         }
       }
     }
@@ -23,6 +24,7 @@ export function getNote({noteId, token}){
       id
       title
       content
+      createdAt
     }
   }`
   return makeFetch({query: query, token: token})

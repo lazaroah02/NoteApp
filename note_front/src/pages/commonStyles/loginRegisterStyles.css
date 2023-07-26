@@ -37,6 +37,7 @@
 }
 .title img{
     width: 30px;
+    height: 30px;
 }
 .description{
     display: flex;

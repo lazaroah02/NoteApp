@@ -31,6 +31,10 @@ export default {
 
 <style>
 @font-face {
+  font-family: "Raleway";
+  src: url('./assets/fonts/Raleway-VariableFont_wght.woff2');
+}
+@font-face {
   font-family: "Cabin";
   src: url('./assets/fonts/Cabin-VariableFont_wdth,wght.woff2');
 }
