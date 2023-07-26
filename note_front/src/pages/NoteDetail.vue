@@ -2,6 +2,8 @@
 import { defineComponent, ref } from 'vue'
 import {getNote, editNote, deleteNote} from '../services/notesService'
 import {useRoute, useRouter} from 'vue-router'
+import './commonStyles/pages.css'
+import './commonStyles/addNote-editNote-styles.css'
 
 export default defineComponent({
     name:"NoteDetail",
@@ -15,9 +17,9 @@ export default defineComponent({
         return {title, content, noteId, router, showErrorMessage}
     },
     methods:{
-        onEditNote(e){
+        handleEditNote(e){
             e.preventDefault()
-            editNote(this.noteId, {title:this.title, content: this.content})
+            editNote({noteId: this.noteId, token:this.userToken, data:{title:this.title, content: this.content}})
             .then(data => {
                 if(data.errors){
                     alert("Error al editar la nota")
@@ -26,7 +28,7 @@ export default defineComponent({
                 }
             })
         },
-        onDeleteNote(){
+        handleDeleteNote(){
             deleteNote({noteId:this.noteId, token:this.userToken})
             .then((data) => {
                 if(data.errors){
@@ -35,18 +37,10 @@ export default defineComponent({
                     this.router.push("/")
                 }
             })
-        }
-    },
-    //watch when user token change to fecth user notes
-    computed:{
-        userToken(){
-            return this.$store.state.infoUser.token
-        }
-    },
-    watch:{
-        userToken(token){
+        },
+        fetchNote(token){
             if(token){
-                getNote({noteId:this.noteId, token:this.$store.state.infoUser.token})
+                getNote({noteId:this.noteId, token:this.userToken})
                 .then(data => {
                     if(data.errors){
                         this.showErrorMessage = true
@@ -58,65 +52,58 @@ export default defineComponent({
             }
         }
     },
-    mounted(){
-        if(this.userToken){
-            getNote({noteId:this.noteId, token:this.$store.state.infoUser.token})
-            .then(data => {
-                if(data.errors){
-                        this.showErrorMessage = true
-                }else{
-                    this.title = data.data.note.title,
-                    this.content = data.data.note.content
-                }
-            })
+    //watch when user token change to fecth user notes
+    computed:{
+        userToken(){
+            return this.$store.state.infoUser.token
         }
+    },
+    watch:{
+        userToken(token){
+            this.fetchNote(token)
+        }
+    },
+    mounted(){
+        this.fetchNote(this.userToken)
     }
 })
 </script>
 
 <template>
-    <form v-if="!showErrorMessage"   class = "note-detail-form" @submit="editNote">
-        <label>Titulo:</label>
-        <input class = "input-title" type="text" :value= "title" @change="e => title=e.target.value"/>
-        <label>Content:</label>
-        <textarea class = "input-content" :value = "content" @change="e => content=e.target.value"></textarea>
-        <div class = "buttons-container">
-            <button class = "delete-button" @click="onDeleteNote()">Eliminar</button>
-            <button class = "send-button" @click="onDeleteNote">Enviar</button>
+    <div class = "page-background">
+        <div class = "panel">
+            <div class = "title"><span>Green</span> Notes</div>
+            <form v-if="!showErrorMessage"  class = "note-form" @submit="(e) => handleEditNote(e)">
+                <div class = "go-back-button-and-input-title-container">
+                    <button 
+                        class = "go-back-button" 
+                        type = "button"
+                        @click="router.push('/')"
+                        ><img alt = "chevron-left" src = "../assets/chevron-left.svg"/></button>
+                        <input class = "input-title" type="text" :value= "title" @change="e => title=e.target.value"/>
+                </div>
+                <textarea class = "input-content" :value = "content" @change="e => content=e.target.value"></textarea>
+                <button type = "button" class = "cancel-button" @click="handleDeleteNote()"><img alt = "trash" src = "../assets/trash.svg"/></button>
+                <button class = "send-button"><img alt = "check" src = "../assets/check-icon.svg"/></button>
+            </form>
+            <div v-else class = "error-message">Error to get the note</div>
         </div>
-    </form>
-    <div v-else>Error al obtener la nota</div>
+    </div>
 </template>
 
 <style scoped>
-    .note-detail-form{
-        width: 50vw;
-        margin: 0 auto;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        gap:10px;
-    }
-    .note-detail-form label{
-        text-align: start;
-    }
-    .input-title{
-        width: 99.8%;
-    }
-    .input-content{
-        min-width: 100%;
-        max-width: 100%;
-        min-height: 100px;
-    }
-    .buttons-container{
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-    }
-    .send-button{
-        background-color:blue;
-    }
-    .delete-button{
-        background-color:red;
+    .error-message{
+        width: 200px;
+        background-color:#DC6161;
+        margin:0 auto;
+        position:relative;
+        right: 20px;
+        top:80vh;
+        color:white;
+        text-align:center;
+        border-radius: 10px;
+        height: 30px;
+        font-family: 'Raleway';
+        padding-top: 10px;
     }
 </style>

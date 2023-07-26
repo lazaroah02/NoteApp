@@ -1,4 +1,8 @@
-.panel{
+@font-face {
+    font-family: "Raleway";
+    src: url('../../assets/fonts/Raleway-VariableFont_wght.woff2');
+}
+.login-register-panel{
     height: 100vh;
     width: 50%;
     position: absolute;
@@ -60,6 +64,8 @@
     border:0;
     background-color: transparent;
     border-bottom: 1px solid #707070;
+    font-family: "Raleway";
+
 }
 .form input:focus{
     outline: none;
@@ -89,7 +95,7 @@
 
 /*Mobile*/
 @media (max-width:700px){
-    .panel{
+    .login-register-panel{
         width: 100%;
     }
     .title-container{
@@ -107,7 +113,7 @@
 }
 /*Tablet*/
 @media (min-width:700px) and (max-width:1000px){
-    .panel{
+    .login-register-panel{
         width: 70%;
     }
     .title-container{

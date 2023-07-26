@@ -51,7 +51,7 @@ export default defineComponent({
 
 <template>
     <div class = "page-background">
-        <div class = "panel">
+        <div class = "login-register-panel">
             <div class = "title-container">
                 <div class = "title">Welcome to <span> Green</span> Notes <img alt = "notes-logo" src = "../assets/logo.png"/></div>
             </div>

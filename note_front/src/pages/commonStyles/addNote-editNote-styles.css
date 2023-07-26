@@ -1,3 +1,7 @@
+@font-face {
+    font-family: "Cabin";
+    src: url('../../assets/fonts/Cabin-VariableFont_wdth,wght.woff2');
+}
 .note-form{
     width: 90%;
     height: 100%;
@@ -33,6 +37,7 @@
     border: 0;
     height: 96%;
     width: 80%;
+    font-family: "Cabin";
 }
 .input-title:focus{
     outline:none;
@@ -43,6 +48,7 @@
     border: 0;
     resize: none;
     padding:10px;
+    font-family: "Cabin";
 }
 .input-content:focus{
     outline:none;

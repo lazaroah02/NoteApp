@@ -6,17 +6,19 @@ from django_graphene_permissions import permissions_checker
 from django_graphene_permissions.permissions import IsAuthenticated
 from .exceptions import NotOwnerException
 from graphene_django.filter import DjangoFilterConnectionField
-from django_filters import FilterSet, OrderingFilter
+from django_filters import FilterSet, OrderingFilter, CharFilter
 from .utils import convert_graphqlid_to_int
+from django.db.models import Q
 
 User = get_user_model()
 
 class NoteFilter(FilterSet):
+    search = CharFilter(method='filter_by_title_or_content')
     class Meta:
         model = Note
         fields = {
-            'title': ('exact', 'contains'),
-            'content': ('exact', 'contains'),
+            'title': ('contains',),
+            'content': ('contains',),
         }
     order_by = OrderingFilter(
         fields=(
@@ -26,6 +28,8 @@ class NoteFilter(FilterSet):
         'created_at': 'created_at',
         }
     )
+    def filter_by_title_or_content(self, queryset, name, value):
+        return queryset.filter(Q(title__icontains=value) | Q(content__icontains=value))
 
 class NoteType(DjangoObjectType):
     class Meta:
@@ -102,7 +106,8 @@ class UpdateNoteMutation(graphene.Mutation):
 
     @permissions_checker([IsAuthenticated])
     def mutate(self, info, id, title, content):
-        note = Note.objects.get(id = id)
+        num_id = convert_graphqlid_to_int(id)
+        note = Note.objects.get(id = num_id)
         if note.user.id != info.context.user.id:
             raise NotOwnerException
         note.title = title

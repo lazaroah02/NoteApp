@@ -75,6 +75,11 @@ export default {
         },
         addNoteToDeletingList(noteId){
             this.notesToDelete.push(noteId)
+        },
+        handleLogout(){
+            localStorage.removeItem("jwt")
+            this.$store.commit("setInfoUser", {username:null, token:null})
+            this.router.push('/login')
         }
     }, 
     components:{
@@ -110,6 +115,7 @@ export default {
 <template>
     <div class = "page-background">
         <section class = "panel">
+            <div class = "close-session-button" @click="handleLogout()"><img alt = "close-session" src = "../assets/turn-of-icon.svg"/></div>
             <div class = "notes-title-container">
                 <div class = "notes-title"><span>Green</span> Notes <img alt = "notes-logo" src = "../assets//logo.png"/></div>
                 <div class = "notes-welcome-message">Hi {{ $store.state.infoUser.username }}, here are your notes</div>
@@ -162,6 +168,12 @@ export default {
         justify-content: center;
         padding-bottom: 10px;
         margin-top: 20px;
+    }
+    .close-session-button{
+        position: fixed;
+        right: 10px;
+        top: 10px;
+        cursor: pointer;
     }
     .notes-title{
         display: flex;
@@ -272,7 +284,7 @@ export default {
         align-items: center;
     }
     .cancel-deletion{
-        background-color:blue!important;
+        background-color:#707070!important;
         padding-top: 8px;
     }
     .confirm-notes-deletion{

@@ -2,7 +2,7 @@ import { makeFetch } from "./base";
 
 export function getNotes({token, orderBy = "-created_at", contains = ""}){
   const query = `{
-    notes(orderBy: "${orderBy}", title_Contains:"${contains}", content_Contains:"${contains}"){
+    notes(orderBy: "${orderBy}", search: "${contains}"){
       edges{
         node{
           id
@@ -53,8 +53,7 @@ export function createNote({data, token}){
 export function editNote({noteId, token, data}){
   const query = `
   mutation {
-    editNote(id: ${noteId}, title: "${data.title}", content: "${data.content}"){
-      success,
+    updateNote(id: "${noteId}", title: "${data.title}", content: "${data.content}"){
       note{
         id,
         title,
