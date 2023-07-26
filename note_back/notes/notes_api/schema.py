@@ -67,7 +67,30 @@ class DeleteNoteMutation(graphene.Mutation):
         if note.user.id != info.context.user.id:
             raise NotOwnerException
         note.delete()      
-        return DeleteNoteMutation(message = "Note deleted succesfuly")      
+        return DeleteNoteMutation(message = "Note deleted succesfully")      
+
+class BulkDeleteNotesMutation(graphene.Mutation):
+    class Arguments:
+        ids = graphene.List(graphene.ID, required=True)
+    
+    message = graphene.String()      
+    
+    @permissions_checker([IsAuthenticated])
+    def mutate(self, info, ids):
+        """
+        -ids is a string like: ['Tm90ZVR5cGU6OTQ=,Tm90ZVR5cGU6OTI=,Tm90ZVR5cGU6OTE=']
+        -so i convert ids to a list with list(ids) to obtains something like ['Tm90ZVR5cGU6OTQ=,Tm90ZVR5cGU6OTI=,Tm90ZVR5cGU6OTE=']
+        -then i take ids[0] -> 'Tm90ZVR5cGU6OTQ=,Tm90ZVR5cGU6OTI=,Tm90ZVR5cGU6OTE='
+        -split them and save in a list to iterate the ids, recovery the note and delete it
+        """
+        ids_list = str(list(ids)[0]).split(",") 
+        for id in ids_list:
+            num_id = convert_graphqlid_to_int(id)
+            note = Note.objects.get(id = num_id)
+            if note.user.id != info.context.user.id:
+                raise NotOwnerException
+            note.delete()      
+        return DeleteNoteMutation(message = "Notes deleted succesfully")       
 
 class UpdateNoteMutation(graphene.Mutation):
     class Arguments:
@@ -106,4 +129,5 @@ class Query(graphene.ObjectType):
 class Mutation(graphene.ObjectType):
     create_note = CreateNoteMutation.Field()    
     delete_note = DeleteNoteMutation.Field()
+    bulk_delete_notes = BulkDeleteNotesMutation.Field()
     update_note = UpdateNoteMutation.Field()

@@ -81,3 +81,16 @@ export function deleteNote({noteId, token}){
   .then(data => {return data})
 }
 
+export function bulkDeleteNotes({notesId, token}){
+  const query = `
+    mutation{
+      bulkDeleteNotes(ids: "${notesId}"){
+        message
+      }
+    }
+  `
+  return makeFetch({query: query, token:token})
+  .then(res => res.json())
+  .then(data => {return data})
+}
+

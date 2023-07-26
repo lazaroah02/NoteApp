@@ -1,6 +1,6 @@
 <script>
 import {ref} from 'vue'
-import {getNotes, deleteNote} from '../services/notesService'
+import {getNotes, bulkDeleteNotes} from '../services/notesService'
 import {useRouter} from 'vue-router'
 import NoteComponent from '../components/NoteComponent.vue'
 import {debounce} from '../utils/debounce'
@@ -15,33 +15,37 @@ export default {
         const contains = ref("")
         const loading = ref(true)
         const loadingSearch = ref(false)
+        const deletingNotes = ref(false)
+        const notesToDelete = ref([])
 
         const searchWithDebounce = debounce((func) => {
             func()
         }, 500);
 
-        return {notes, router, orderBy, contains, loading, loadingSearch, searchWithDebounce}
+        return {notes, router, orderBy, contains, loading, loadingSearch, searchWithDebounce, deletingNotes, notesToDelete}
     },
     methods:{
-        handleDeleteNote(noteId){
-            deleteNote({noteId:noteId, token:this.userToken})
-            .then(data => {
-                if(data.errors){
-                    alert("Error al eliminar la nota")
-                }
-                else{
-                    alert("Nota eliminada correctamente")
-                    this.removeNoteFromNoteList(noteId)
-                }
-            })
-            
-        },
-        removeNoteFromNoteList(noteId){
-            for(let i = 0; i < this.notes.length; i++){
-                if(this.notes[i].node.id == noteId){
-                    this.notes.splice(i, 1)
-                }
+        handleDeleteNotes(){
+            let notesToDeleteCopy = [...this.notesToDelete]
+            let choice = window.confirm("Are you sure you want to delete your notes")
+            if(choice){
+                bulkDeleteNotes({notesId:notesToDeleteCopy, token:this.userToken})
+                .then(data => {
+                    if(data.errors){
+                        alert("Error to delete notes")
+                    }
+                    else{
+                        this.deletingNotes = false
+                        this.removeNotesFromNoteList(notesToDeleteCopy)
+                    }
+                })
             }
+        },
+        removeNotesFromNoteList(notesId){
+            let notesCopy = [...this.notes]
+            this.notes = notesCopy.filter(note => {
+                notesId.indexOf(note.node.id) === -1
+            });
         },
         fetchNotes(token){
             if(token){
@@ -70,6 +74,9 @@ export default {
             }
             this.fetchNotes(this.userToken)
         },
+        addNoteToDeletingList(noteId){
+            this.notesToDelete.push(noteId)
+        }
     }, 
     components:{
         NoteComponent,
@@ -88,6 +95,11 @@ export default {
         //when the user type a search, fetch the notes that match 
         contains(){
             this.searchWithDebounce(this.handleSearch)
+        },
+        deletingNotes(value){
+            if(!value){
+                this.notesToDelete = []
+            }
         }
     },
     mounted(){
@@ -117,10 +129,28 @@ export default {
                 </button>
             </form>
             <div class = "notes-loader" v-if="loading"><div><LoaderComponent/></div></div>
+            <div class = "not-notes-message" v-if="notes.length === 0">There is not Notes</div>
             <div class = "cards-container">
-                <NoteComponent v-for="note in notes"  :key="note.node.id" :note = "note"/>
+                <NoteComponent 
+                    v-for="note in notes"  
+                    :key="note.node.id" 
+                    :note = "note" 
+                    :addNoteToDeletingList = "addNoteToDeletingList"
+                    :deletingNotes = "deletingNotes"
+                    />
             </div>
         </section>
+        <div class = "select-notes-to-delete-message" v-if="deletingNotes && notesToDelete.length === 0">Select notes to delete</div>
+        <button 
+            class = "confirm-notes-deletion"
+            v-if="deletingNotes && notesToDelete.length>0"
+            @click="handleDeleteNotes()"
+            ><img alt = "trash" src = "../assets/trash.svg"/></button>
+        <button 
+            v-if="notes.length > 0" 
+            :class = "deletingNotes?'delete-notes-button cancel-deletion':'delete-notes-button'"
+            @click="deletingNotes = !deletingNotes"
+            ><img v-if = "deletingNotes" alt = 'x' src = "../assets/x-icon.svg"/>{{ !deletingNotes?'-':null }}</button>
         <button class = "create-note-button" @click="router.push(to = '/notes/add')">+</button>
     </div>
 </template>
@@ -226,8 +256,8 @@ export default {
     }
     .create-note-button{
         position: fixed;
-        bottom: 70px;
-        right: 70px;
+        bottom: 50px;
+        right: 50px;
         width: 45px;
         height: 45px;
         border-radius: 100%;
@@ -236,6 +266,59 @@ export default {
         color:white;
         border:0;
         cursor: pointer;
+    }
+    .delete-notes-button{
+        background-color: #DC6161;
+        width: 40px;
+        height: 40px;
+        position:fixed;
+        bottom: 120px;
+        right: 53px;
+        color:white;
+        border-radius: 100%;
+        border:0;
+        cursor:pointer;
+        font-size: 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .cancel-deletion{
+        background-color:blue!important;
+        padding-top: 8px;
+    }
+    .confirm-notes-deletion{
+        background-color: red;
+        width: 40px;
+        height: 40px;
+        position:fixed;
+        bottom: 180px;
+        right: 53px;
+        color:white;
+        border-radius: 100%;
+        border:0;
+        cursor:pointer;
+    }
+    .select-notes-to-delete-message{
+        width: 200px;
+        background-color:#DC6161;
+        margin:0 auto;
+        position:relative;
+        right: 20px;
+        top:90vh;
+        color:white;
+        text-align:center;
+        border-radius: 10px;
+        height: 30px;
+        font-family: 'Raleway';
+        padding-top: 10px;
+    }
+    .not-notes-message{
+        width: 96%;
+        text-align: center;
+        position:relative;
+        top:40vh;
+        color:red
     }
     .cards-container{
         display: grid;

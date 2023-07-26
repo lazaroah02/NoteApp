@@ -1,14 +1,18 @@
 <script>
 import { useRouter } from 'vue-router';
 import { formatDate } from '@/utils/formatDate';
+import {ref} from 'vue'
 
 export default {
     setup() {
         const router = useRouter()
-        return {router}
+        const cardStyle = ref("card")
+        return {router, cardStyle}
     },
     props:{
         note:Object,
+        addNoteToDeletingList:Function,
+        deletingNotes:Boolean,
     },
     methods:{
         validateLengthTitle(text){
@@ -25,13 +29,32 @@ export default {
         },
         handleFormatDate(timeStamp){
             return formatDate(timeStamp)
+        },
+        addNoteToDeletingNotesList(noteId){
+            this.cardStyle = "card card-red"
+            this.addNoteToDeletingList(noteId)
         }
-    }
+    },
+    watch:{
+        deletingNotes(value){
+            if(!value){
+                this.cardStyle = "card"
+            }
+        }
+    },
 }
 </script>
 
 <template>
-    <div class = "card" @click="router.push(`note/${note.node.id}`)">
+    <div 
+        :class = "cardStyle" 
+        @click="
+            deletingNotes?
+                addNoteToDeletingNotesList(note.node.id)
+                :
+                router.push(`note/${note.node.id}`)
+        "
+        >
         <div class = "title">{{ validateLengthTitle(note.node.title) }}</div>
         <p class = "content">{{ validateLengthContent(note.node.content) }}</p>
         <div class = "date">{{ handleFormatDate(note.node.createdAt) }}</div>
@@ -50,6 +73,9 @@ export default {
         flex-direction: column;
         justify-content: space-between;
         font-family: "Cabin"!important;
+    }
+    .card-red{
+        background-color:#ECAFAF!important;
     }
     .title{
         text-align: start;
