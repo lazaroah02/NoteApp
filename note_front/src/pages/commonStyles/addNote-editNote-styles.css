@@ -38,6 +38,7 @@
     height: 96%;
     width: 80%;
     font-family: "Cabin";
+    font-size: 14pt;
 }
 .input-title:focus{
     outline:none;
@@ -49,6 +50,7 @@
     resize: none;
     padding:10px;
     font-family: "Cabin";
+    font-size: 12pt;
 }
 .input-content:focus{
     outline:none;

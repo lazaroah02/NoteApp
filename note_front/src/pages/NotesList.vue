@@ -18,12 +18,15 @@ export default {
         const loadingSearch = ref(false)
         const deletingNotes = ref(false)
         const notesToDelete = ref([])
+        const showSearchResultStatus = ref(false)
+        const searchResultStatus = ref("")
 
         const searchWithDebounce = debounce((func) => {
             func()
         }, 500);
 
-        return {notes, router, orderBy, contains, loading, loadingSearch, searchWithDebounce, deletingNotes, notesToDelete}
+        return {notes, router, orderBy, contains, loading, loadingSearch, searchWithDebounce, 
+            deletingNotes, notesToDelete, showSearchResultStatus, searchResultStatus}
     },
     methods:{
         handleDeleteNotes(){
@@ -53,6 +56,7 @@ export default {
                         this.notes = data.data.notes.edges
                         this.loading = false
                         this.loadingSearch = false
+                        this.handleShowSearchStatus(data.data.notes.edges.length)
                     })
             }
         },
@@ -72,6 +76,14 @@ export default {
                 e.preventDefault()
             }
             this.fetchNotes(this.userToken)
+        },
+        handleShowSearchStatus(resultsSize){
+            if(this.contains !== ""){
+                this.searchResultStatus = `Found ${resultsSize} notes with word "${this.contains}"`
+                this.showSearchResultStatus = true
+            }else{
+                this.showSearchResultStatus = false
+            }
         },
         addNoteToDeletingList(noteId){
             this.notesToDelete.push(noteId)
@@ -135,6 +147,7 @@ export default {
             </form>
             <div class = "notes-loader" v-if="loading"><div><LoaderComponent/></div></div>
             <div class = "not-notes-message" v-if="notes.length === 0">There is not Notes</div>
+            <div class = "search-result-status" v-if="showSearchResultStatus">{{ searchResultStatus }}</div>
             <div class = "cards-container">
                 <NoteComponent 
                     v-for="note in notes"  
@@ -299,6 +312,10 @@ export default {
         border:0;
         cursor:pointer;
     }
+    .search-result-status{
+        margin-top:10px;
+        font-size: 12pt;
+    }
     .select-notes-to-delete-message{
         width: 200px;
         background-color:#DC6161;
@@ -318,12 +335,12 @@ export default {
         text-align: center;
         position:relative;
         top:40vh;
-        color:red
+        color:#315137;
     }
     .cards-container{
         display: grid;
-        width: 90vw;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        width: 95vw;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 230px));
         gap:30px;
         margin-top:20px;
         padding-right: 20px;
@@ -337,9 +354,9 @@ export default {
         width: 10px;
     }
     .cards-container::-webkit-scrollbar-thumb {
-        background-color: #707070; 
+        background-color: #315137; 
         border-radius: 20px;
-        border: 3px solid #f5f5f5;
+        border: 1px solid #f5f5f5;
     }
 
     /*Mobile*/
