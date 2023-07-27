@@ -31,6 +31,7 @@ export default {
     },
     methods:{
         handleDeleteNotes(){
+            this.loading = true
             let notesToDeleteCopy = [...this.notesToDelete]
             let choice = window.confirm("Are you sure you want to delete your notes")
             if(choice){
@@ -38,9 +39,11 @@ export default {
                 .then(data => {
                     if(data.errors){
                         alert("Error to delete notes")
+                        this.loading = false
                     }
                     else{
                         this.deletingNotes = false
+                        this.loading = false
                         this.removeNotesFromNoteList(notesToDeleteCopy)
                     }
                 })

@@ -3,13 +3,18 @@ import { defineComponent, ref } from 'vue'
 import {login} from '../services/authentication'
 import {useRouter} from "vue-router"
 import './commonStyles/loginRegisterStyles.css'
+import LoaderComponent from '../components/LoaderComponent'
 
 export default defineComponent({
     setup() {
         const username = ref("")
         const password = ref("")
         const router = useRouter()
-        return {username, password, router}
+        const loading = ref(false)
+        return {username, password, router, loading}
+    },
+    components:{
+        LoaderComponent,
     },
     methods:{
         handleLogin(e){
@@ -18,14 +23,17 @@ export default defineComponent({
                 alert("Don't leav empty fields")
             }
             else{
+                this.loading = true
                 login({username:this.username, password: this.password})
                 .then(data => {
                     if(data.data.tokenAuth.success === true){
                         localStorage.setItem("jwt", data.data.tokenAuth.token)
                         this.$store.commit("setInfoUser", {username:this.username, token:data.data.tokenAuth.token})
+                        this.loading = false
                         this.router.push("/")
                     }
                     else{
+                        this.loading = false
                         alert("Error in login, check your password or username")
                     }
                 })
@@ -52,7 +60,9 @@ export default defineComponent({
                 <label>Password</label>
                 <input type="text" :value = "password" @change = "e => password = e.target.value"/>
                 <div class = "register-link">If you don't have account register <a @click="router.push('/register')">here</a></div>
-                <button>Login</button>
+                <button>{{!loading?"Login":null}}
+                    <div class = "login-loader-component" v-if="loading"><LoaderComponent/></div>
+                </button>
             </form>
         </div>
     </div>

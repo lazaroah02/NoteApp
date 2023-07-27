@@ -88,9 +88,18 @@
     margin:0 auto;
     margin-top:70px;
     cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
 }
 .register-form{
     top: 23vh !important;
+}
+.login-loader-component{
+    width: 20px;
+    height: 20px;
+    margin-bottom: 10px;
 }
 
 /*Mobile*/
@@ -102,7 +111,7 @@
         margin-top:80px;
     }
     .title{
-        font-size:23px;
+        font-size:20px;
     }
     .form{
         top:20vh;

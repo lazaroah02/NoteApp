@@ -3,6 +3,7 @@ import { defineComponent, ref } from 'vue'
 import {register} from '../services/authentication'
 import {useRouter} from "vue-router"
 import './commonStyles/loginRegisterStyles.css'
+import LoaderComponent from '../components/LoaderComponent'
 
 export default defineComponent({
     setup() {
@@ -11,7 +12,11 @@ export default defineComponent({
         const pass1 = ref("")
         const pass2 = ref("")
         const router = useRouter()
-        return {username, email, pass1, pass2, router}
+        const loading= ref(false)
+        return {username, email, pass1, pass2, router, loading}
+    },
+    components:{
+        LoaderComponent,
     },
     methods:{
         handleRegister(e){
@@ -23,15 +28,18 @@ export default defineComponent({
                 alert("Passwords not the same")
             }
             else{
+                this.loading = true
                 register({username:this.username, email:this.email, password1: this.pass1, password2: this.pass2})
                 .then(data => {
                     console.log(data)
                     if(data.data.register.success){
                         localStorage.setItem("jwt", data.data.register.token)
                         this.$store.commit("fetchInfoUser", {token:data.data.register.token})
+                        this.loading = false
                         this.router.push("/")
                     }
                     else{
+                        this.loading = false
                         if(data.data.register.errors.email){
                             alert(data.data.register.errors.email[0].message)
                         }
@@ -65,7 +73,9 @@ export default defineComponent({
                 <label>Repeat Password</label>
                 <input type="text" :value = "pass2" @change = "e => pass2 = e.target.value"/>
                 <div class = "register-link">If you have account login <a @click="router.push('/login')">here</a></div>
-                <button>Register</button>
+                <button>{{!loading?"Register":null}}
+                    <div v-if="loading" class = "login-loader-component"><LoaderComponent/></div>
+                </button>
             </form>
         </div>
     </div>
