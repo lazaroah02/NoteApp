@@ -50,7 +50,7 @@ body{
   background-attachment: fixed;
   background-size: cover;
   background-repeat: no-repeat ;
-  background-color: rgb(160, 160, 160);
+  background-color: #315137;
   position: absolute;
   min-width: 100vw;
   min-height: 100vh;

@@ -26,7 +26,7 @@ export default defineComponent({
                         this.router.push("/")
                     }
                     else{
-                        alert("Error in login")
+                        alert("Error in login, check your password or username")
                     }
                 })
             }
