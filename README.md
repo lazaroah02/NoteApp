@@ -18,7 +18,7 @@ activate
 Go to the the backend folder of the app (note_back/notes) and install the dependencies:
 
 ```
-pip install -r requeriments.txt
+pip install -r requirements.txt
 ```
 
 ## Run the migrations
